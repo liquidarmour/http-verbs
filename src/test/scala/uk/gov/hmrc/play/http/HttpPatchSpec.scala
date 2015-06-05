@@ -37,7 +37,8 @@ class HttpPatchSpec extends WordSpecLike with Matchers with CommonHttpBehaviour 
       val testPatch = new StubbedHttpPatch(Future.successful(response))
       testPatch.PATCH(url, testObject).futureValue shouldBe response
     }
-    "be able to return HTML responses" in new HtmlHttpReads {
+    "be able to return HTML responses" in {
+      import uk.gov.hmrc.play.http.reads.BackwardsCompatibleReadsRecipes.readToHtml
       val testPatch = new StubbedHttpPatch(Future.successful(new DummyHttpResponse(testBody, 200)))
       testPatch.PATCH(url, testObject).futureValue should be (an [Html])
     }

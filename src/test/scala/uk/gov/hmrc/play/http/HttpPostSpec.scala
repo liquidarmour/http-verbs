@@ -21,6 +21,7 @@ import play.api.http.HttpVerbs._
 import play.api.libs.json.Writes
 import play.twirl.api.Html
 import uk.gov.hmrc.play.audit.http.HeaderCarrier
+import uk.gov.hmrc.play.http.reads.HtmlHttpReads
 import uk.gov.hmrc.play.test.Concurrent.await
 import uk.gov.hmrc.play.test.Concurrent.liftFuture
 import scala.concurrent.Future
@@ -41,7 +42,8 @@ class HttpPostSpec extends WordSpecLike with Matchers with CommonHttpBehaviour {
       val testPOST = new StubbedHttpPost(Future.successful(response))
       testPOST.POST(url, testObject).futureValue shouldBe response
     }
-    "be able to return HTML responses" in new HtmlHttpReads {
+    "be able to return HTML responses" in {
+      import uk.gov.hmrc.play.http.reads.BackwardsCompatibleReadsRecipes.readToHtml
       val testPOST = new StubbedHttpPost(Future.successful(new DummyHttpResponse(testBody, 200)))
       testPOST.POST(url, testObject).futureValue should be (an [Html])
     }
@@ -60,7 +62,8 @@ class HttpPostSpec extends WordSpecLike with Matchers with CommonHttpBehaviour {
       val testPOST = new StubbedHttpPost(Future.successful(response))
       testPOST.POSTForm(url, Map()).futureValue shouldBe response
     }
-    "be able to return HTML responses" in new HtmlHttpReads {
+    "be able to return HTML responses" in {
+      import uk.gov.hmrc.play.http.reads.BackwardsCompatibleReadsRecipes.readToHtml
       val testPOST = new StubbedHttpPost(Future.successful(new DummyHttpResponse(testBody, 200)))
       testPOST.POSTForm(url, Map()).futureValue should be (an [Html])
     }
@@ -79,7 +82,8 @@ class HttpPostSpec extends WordSpecLike with Matchers with CommonHttpBehaviour {
       val testPOST = new StubbedHttpPost(Future.successful(response))
       testPOST.POSTString(url, testRequestBody).futureValue shouldBe response
     }
-    "be able to return HTML responses" in new HtmlHttpReads {
+    "be able to return HTML responses" in {
+      import uk.gov.hmrc.play.http.reads.BackwardsCompatibleReadsRecipes.readToHtml
       val testPOST = new StubbedHttpPost(Future.successful(new DummyHttpResponse(testBody, 200)))
       testPOST.POSTString(url, testRequestBody).futureValue should be (an [Html])
     }
@@ -98,7 +102,8 @@ class HttpPostSpec extends WordSpecLike with Matchers with CommonHttpBehaviour {
       val testPOST = new StubbedHttpPost(Future.successful(response))
       testPOST.POSTEmpty(url).futureValue shouldBe response
     }
-    "be able to return HTML responses" in new HtmlHttpReads {
+    "be able to return HTML responses" in {
+      import uk.gov.hmrc.play.http.reads.BackwardsCompatibleReadsRecipes.readToHtml
       val testPOST = new StubbedHttpPost(Future.successful(new DummyHttpResponse(testBody, 200)))
       testPOST.POSTEmpty(url).futureValue should be (an [Html])
     }
