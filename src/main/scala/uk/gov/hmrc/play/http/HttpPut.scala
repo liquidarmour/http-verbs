@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.audit.http.{HeaderCarrier, HttpAuditing}
 import uk.gov.hmrc.play.http.logging.{MdcLoggingExecutionContext, ConnectionTracing}
 import MdcLoggingExecutionContext._
 import uk.gov.hmrc.play.http.reads.HttpReads
+import uk.gov.hmrc.play.http.writes.HttpWrites
 
 import scala.concurrent.Future
 
@@ -29,7 +30,7 @@ trait HttpPut extends HttpVerb with ConnectionTracing with HttpAuditing {
 
   protected def doPut[A](url: String, body: A)(implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse]
 
-  def PUT[I, O](url: String, body: I)(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier): Future[O] = {
+  def PUT[I, O, B](url: String, body: I)(implicit wts: HttpWrites[I, B], rds: HttpReads[O], hc: HeaderCarrier): Future[O] = {
     withTracing(PUT_VERB, url) {
       val httpResponse = doPut(url, body)
       auditRequestWithResponseF(url, PUT_VERB, Option(Json.stringify(wts.writes(body))), httpResponse)

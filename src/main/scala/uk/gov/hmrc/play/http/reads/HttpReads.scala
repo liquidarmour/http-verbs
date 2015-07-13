@@ -21,6 +21,7 @@ import uk.gov.hmrc.play.http.HttpResponse
 trait HttpReads[O] {
   def read(method: String, url: String, response: HttpResponse): O
 }
+
 object HttpReads extends BackwardsCompatibleReadsRecipes {
 
   // readRaw is brought in like this rather than in a trait as this gives it
@@ -31,5 +32,6 @@ object HttpReads extends BackwardsCompatibleReadsRecipes {
   def apply[O](readF: (String, String, HttpResponse) => O): HttpReads[O] = new HttpReads[O] {
     def read(method: String, url: String, response: HttpResponse) = readF(method, url, response)
   }
+
   def always[O](const: O): HttpReads[O] = HttpReads((_,_,_) => const)
 }
