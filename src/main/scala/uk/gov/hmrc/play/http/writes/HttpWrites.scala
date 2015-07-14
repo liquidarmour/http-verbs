@@ -16,20 +16,20 @@
 
 package uk.gov.hmrc.play.http.writes
 
-import uk.gov.hmrc.play.audit.http.HeaderCarrier
-import uk.gov.hmrc.play.http.{HttpRequest, HttpResponse}
+trait HttpWrites[I, B] {
 
-trait HttpWrites[I, O] {
+  def writes(requestContent: I): B
 
-  def write(requestContent: I): O
+  def audit(content: I): Option[_]
 
 }
 
 object HttpWrites {
 
-  def apply[I, O](writef: (String, String, HttpRequest)(implicit headerCarrier: HeaderCarrier) => HttpRequest[]): HttpWrites[I, O] = new HttpWrites[I, O] {
-    def write(method: String, url: String, response: HttpResponse) = writef(method, url, response)
-  }
+  def apply[I, B](writef: (I) => B): HttpWrites[I, B] = new HttpWrites[I, B] {
 
-  def always[O](const: O): HttpWrites[O] = HttpWrites((_,_,_) => const)
+    def writes(content: I) = writef(content)
+
+    override def audit(content: I): Option[_] = None
+  }
 }
